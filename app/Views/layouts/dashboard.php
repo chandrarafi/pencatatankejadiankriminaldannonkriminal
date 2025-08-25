@@ -216,43 +216,43 @@
                         <?php elseif ($role === 'reskrim'): ?>
                             <li class="nav-header">RESKRIM MENU</li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="<?= base_url('reskrim/kasus') ?>" class="nav-link">
                                     <i class="nav-icon fas fa-folder-open"></i>
                                     <p>Data Kasus</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="<?= base_url('reskrim/korban') ?>" class="nav-link">
                                     <i class="nav-icon fas fa-user-injured"></i>
                                     <p>Data Korban</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="<?= base_url('reskrim/tersangka') ?>" class="nav-link">
                                     <i class="nav-icon fas fa-user-secret"></i>
                                     <p>Data Tersangka</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="<?= base_url('reskrim/saksi') ?>" class="nav-link">
                                     <i class="nav-icon fas fa-eye"></i>
                                     <p>Data Saksi</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="<?= base_url('reskrim/pelapor') ?>" class="nav-link">
                                     <i class="nav-icon fas fa-users"></i>
                                     <p>Data Pelapor</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="<?= base_url('reskrim/piket') ?>" class="nav-link">
                                     <i class="nav-icon fas fa-clock"></i>
                                     <p>Data Piket</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="<?= base_url('reskrim/laporan') ?>" class="nav-link">
                                     <i class="nav-icon fas fa-file-alt"></i>
                                     <p>Semua Laporan</p>
                                 </a>

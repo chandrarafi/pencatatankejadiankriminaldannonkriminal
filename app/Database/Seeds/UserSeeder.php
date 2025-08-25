@@ -57,7 +57,7 @@ class UserSeeder extends Seeder
         ];
 
         // Hapus data lama jika ada (untuk development)
-        $this->db->table('users')->delete();
+        $this->db->table('users')->where('id >', 0)->delete();
 
         // Insert data users
         $this->db->table('users')->insertBatch($data);

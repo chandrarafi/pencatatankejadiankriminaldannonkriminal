@@ -26,7 +26,8 @@ class KasusModel extends Model
         'pelapor_telepon',
         'pelapor_alamat',
         'petugas_id',
-        'created_by'
+        'created_by',
+        'keterangan'
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -259,5 +260,57 @@ class KasusModel extends Model
         ];
 
         return $badges[$prioritas] ?? '<span class="badge badge-light">' . ucfirst($prioritas) . '</span>';
+    }
+
+    /**
+     * Get data for DataTables with search functionality (for RESKRIM access)
+     */
+    public function getDataTableData($search = '', $start = 0, $length = 10, $orderColumn = 'created_at', $orderDir = 'desc')
+    {
+        // Ensure parameters are of correct type
+        $start = (int) $start;
+        $length = (int) $length;
+        $search = (string) $search;
+        $orderColumn = (string) $orderColumn;
+        $orderDir = (string) $orderDir;
+
+        $builder = $this->select('kasus.*, jenis_kasus.nama_jenis as jenis_kasus_nama, pelapor.nama as pelapor_nama, pelapor.telepon as pelapor_telepon')
+            ->join('jenis_kasus', 'jenis_kasus.id = kasus.jenis_kasus_id', 'left')
+            ->join('pelapor', 'pelapor.id = kasus.pelapor_id', 'left');
+
+        if ($search) {
+            $builder->groupStart()
+                ->like('kasus.nomor_kasus', $search)
+                ->orLike('kasus.judul_kasus', $search)
+                ->orLike('jenis_kasus.nama_jenis', $search)
+                ->orLike('kasus.pelapor_nama', $search)
+                ->orLike('pelapor.nama', $search)
+                ->orLike('kasus.status', $search)
+                ->groupEnd();
+        }
+
+        $total = $builder->countAllResults(false);
+
+        $builder->orderBy($orderColumn, $orderDir)
+            ->limit($length, $start);
+
+        $data = $builder->get()->getResultArray();
+
+        return [
+            'data' => $data,
+            'total' => $total
+        ];
+    }
+
+    /**
+     * Get kasus with pelapor data (for RESKRIM detail view)
+     */
+    public function getWithPelapor($id)
+    {
+        return $this->select('kasus.*, jenis_kasus.nama_jenis as jenis_kasus_nama, pelapor.nama as pelapor_nama, pelapor.nik as pelapor_nik, pelapor.telepon as pelapor_telepon, pelapor.email as pelapor_email, pelapor.alamat as pelapor_alamat')
+            ->join('jenis_kasus', 'jenis_kasus.id = kasus.jenis_kasus_id', 'left')
+            ->join('pelapor', 'pelapor.id = kasus.pelapor_id', 'left')
+            ->where('kasus.id', $id)
+            ->first();
     }
 }

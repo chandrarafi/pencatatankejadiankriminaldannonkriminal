@@ -98,5 +98,72 @@ $routes->group('spkt', function ($routes) {
     $routes->get('piket/getWeeklySchedule', 'PiketController::getWeeklySchedule');
 });
 
+// RESKRIM routes (Investigation Division)
+$routes->group('reskrim', function ($routes) {
+    // Dashboard
+    $routes->get('dashboard', 'Dashboard::index');
+
+    // Data Kasus routes (Read-only access to existing cases)
+    $routes->get('kasus', 'ReskrimController::kasus');
+    $routes->post('kasus/get-data', 'ReskrimController::getKasusData');
+    $routes->get('kasus/show/(:num)', 'ReskrimController::showKasus/$1');
+    $routes->post('kasus/update-status/(:num)', 'ReskrimController::updateKasusStatus/$1');
+
+    // Data Korban routes
+    $routes->get('korban', 'KorbanController::index');
+    $routes->post('korban/get-data', 'KorbanController::getData');
+    $routes->get('korban/create', 'KorbanController::create');
+    $routes->post('korban/store', 'KorbanController::storeAjax');
+    $routes->get('korban/show/(:num)', 'KorbanController::show/$1');
+    $routes->get('korban/edit/(:num)', 'KorbanController::edit/$1');
+    $routes->post('korban/update/(:num)', 'KorbanController::updateAjax/$1');
+    $routes->delete('korban/delete/(:num)', 'KorbanController::deleteAjax/$1');
+    $routes->get('korban/get-by-id/(:num)', 'KorbanController::getById/$1');
+    $routes->post('korban/search', 'KorbanController::search');
+    $routes->get('korban/get-kasus-data', 'KorbanController::getKasusData');
+
+    // Data Tersangka routes
+    $routes->get('tersangka', 'TersangkaController::index');
+    $routes->post('tersangka/get-data', 'TersangkaController::getData');
+    $routes->get('tersangka/create', 'TersangkaController::create');
+    $routes->post('tersangka/store', 'TersangkaController::storeAjax');
+    $routes->get('tersangka/show/(:num)', 'TersangkaController::show/$1');
+    $routes->get('tersangka/edit/(:num)', 'TersangkaController::edit/$1');
+    $routes->post('tersangka/update/(:num)', 'TersangkaController::updateAjax/$1');
+    $routes->delete('tersangka/delete/(:num)', 'TersangkaController::deleteAjax/$1');
+    $routes->get('tersangka/get-by-id/(:num)', 'TersangkaController::getById/$1');
+    $routes->post('tersangka/search', 'TersangkaController::search');
+    $routes->get('tersangka/get-kasus-data', 'TersangkaController::getKasusData'); // New route for modal
+
+    // Data Saksi routes
+    $routes->get('saksi', 'SaksiController::index');
+    $routes->post('saksi/get-data', 'SaksiController::getData');
+    $routes->get('saksi/create', 'SaksiController::create');
+    $routes->post('saksi/store', 'SaksiController::storeAjax');
+    $routes->get('saksi/show/(:num)', 'SaksiController::show/$1');
+    $routes->get('saksi/edit/(:num)', 'SaksiController::edit/$1');
+    $routes->post('saksi/update/(:num)', 'SaksiController::updateAjax/$1');
+    $routes->delete('saksi/delete/(:num)', 'SaksiController::deleteAjax/$1');
+    $routes->get('saksi/get-by-id/(:num)', 'SaksiController::getById/$1');
+    $routes->post('saksi/search', 'SaksiController::search');
+    $routes->get('saksi/get-kasus-data', 'SaksiController::getKasusData'); // New route for modal
+
+    // Data Pelapor routes (Read-only access)
+    $routes->get('pelapor', 'ReskrimController::pelapor');
+    $routes->post('pelapor/get-data', 'ReskrimController::getPelaporData');
+    $routes->get('pelapor/show/(:num)', 'ReskrimController::showPelapor/$1');
+    $routes->post('pelapor/search', 'ReskrimController::searchPelapor');
+
+    // Data Piket routes (Read-only access)
+    $routes->get('piket', 'ReskrimController::piket');
+    $routes->post('piket/get-data', 'ReskrimController::getPiketData');
+    $routes->get('piket/show/(:num)', 'ReskrimController::showPiket/$1');
+
+    // Laporan routes
+    $routes->get('laporan', 'ReskrimController::laporan');
+    $routes->post('laporan/generate', 'ReskrimController::generateLaporan');
+    $routes->get('laporan/export/(:segment)', 'ReskrimController::exportLaporan/$1');
+});
+
 // Home (untuk default CI4)
 $routes->get('home', 'Home::index');

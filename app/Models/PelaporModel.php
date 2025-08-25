@@ -241,4 +241,41 @@ class PelaporModel extends Model
 
         return implode(', ', $address);
     }
+
+    /**
+     * Get data for DataTables with search functionality (for RESKRIM read-only access)
+     */
+    public function getDataTableData($search = '', $start = 0, $length = 10, $orderColumn = 'created_at', $orderDir = 'desc')
+    {
+        // Ensure parameters are of correct type
+        $start = (int) $start;
+        $length = (int) $length;
+        $search = (string) $search;
+        $orderColumn = (string) $orderColumn;
+        $orderDir = (string) $orderDir;
+
+        $builder = $this->select('pelapor.*');
+
+        if ($search) {
+            $builder->groupStart()
+                ->like('nama', $search)
+                ->orLike('nik', $search)
+                ->orLike('telepon', $search)
+                ->orLike('alamat', $search)
+                ->orLike('pekerjaan', $search)
+                ->groupEnd();
+        }
+
+        $total = $builder->countAllResults(false);
+
+        $builder->orderBy($orderColumn, $orderDir)
+            ->limit($length, $start);
+
+        $data = $builder->get()->getResultArray();
+
+        return [
+            'data' => $data,
+            'total' => $total
+        ];
+    }
 }
