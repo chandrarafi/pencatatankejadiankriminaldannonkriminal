@@ -155,6 +155,62 @@ class ReskrimController extends BaseController
         return view('reskrim/kasus/show', $data);
     }
 
+    public function updateKasusStatus($id)
+    {
+        // Check role access
+        if ($this->session->get('role') !== 'reskrim') {
+            return $this->response->setJSON(['success' => false, 'message' => 'Akses ditolak']);
+        }
+
+        if (!$this->request->isAJAX()) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Invalid request']);
+        }
+
+        try {
+            $kasus = $this->kasusModel->find($id);
+            if (!$kasus) {
+                return $this->response->setJSON(['success' => false, 'message' => 'Kasus tidak ditemukan']);
+            }
+
+            $newStatus = $this->request->getPost('status');
+            $keterangan = $this->request->getPost('keterangan');
+
+            // Validate status
+            $allowedStatuses = ['dalam_proses', 'selesai', 'ditutup'];
+            if (!in_array($newStatus, $allowedStatuses)) {
+                return $this->response->setJSON(['success' => false, 'message' => 'Status tidak valid']);
+            }
+
+            $updateData = [
+                'status' => $newStatus,
+                'updated_at' => date('Y-m-d H:i:s')
+            ];
+
+            if ($keterangan) {
+                $updateData['keterangan'] = $keterangan;
+            }
+
+            if ($this->kasusModel->update($id, $updateData)) {
+                // Log status change
+                log_message('info', "RESKRIM updated case {$kasus['nomor_kasus']} status from {$kasus['status']} to {$newStatus} by user {$this->session->get('user_id')}");
+
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => 'Status kasus berhasil diperbarui',
+                    'new_status' => $newStatus
+                ]);
+            } else {
+                return $this->response->setJSON(['success' => false, 'message' => 'Gagal mengupdate status kasus']);
+            }
+        } catch (\Exception $e) {
+            log_message('error', 'Error in ReskrimController::updateKasusStatus: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ]);
+        }
+    }
+
     // PELAPOR MANAGEMENT (READ-ONLY ACCESS)
     public function pelapor()
     {

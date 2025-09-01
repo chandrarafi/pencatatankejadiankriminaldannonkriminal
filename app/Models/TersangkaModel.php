@@ -54,7 +54,7 @@ class TersangkaModel extends Model
         'pekerjaan' => 'permit_empty|max_length[100]',
         'telepon' => 'permit_empty|max_length[20]',
         'email' => 'permit_empty|valid_email|max_length[100]',
-        'status_tersangka' => 'required|in_list[ditangkap,ditahan,buron,diserahkan]',
+        'status_tersangka' => 'required|in_list[ditetapkan,ditahan,dibebaskan,buron]',
         'tempat_penahanan' => 'permit_empty|max_length[255]',
         'tanggal_penahanan' => 'permit_empty|valid_date',
         'pasal_yang_disangkakan' => 'permit_empty',

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Kasus Per Tahun - Polsek Lunang Silaut</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+        }
+
+        .container {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #000;
+            padding-bottom: 20px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+        }
+
+        .header-text {
+            text-align: center;
+        }
+
+        .header-text h1 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .header-text h2 {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .header-text p {
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
+
+        .report-title {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .report-title h3 {
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-decoration: underline;
+            margin-bottom: 10px;
+        }
+
+        .report-info {
+            margin-bottom: 30px;
+        }
+
+        .report-info table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .report-info td {
+            padding: 5px;
+            vertical-align: top;
+        }
+
+        .report-info .label {
+            width: 150px;
+            font-weight: bold;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .data-table th,
+        .data-table td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .data-table th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .data-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .data-table .total-row {
+            background-color: #e9ecef !important;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .signature {
+            text-align: center;
+            width: 200px;
+        }
+
+        .signature-line {
+            border-top: 1px solid #000;
+            margin-top: 80px;
+            padding-top: 5px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 20px 0 10px 0;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+
+            .container {
+                max-width: none;
+                margin: 0;
+                padding: 15px;
+            }
+
+            .header {
+                page-break-inside: avoid;
+            }
+
+            .data-table {
+                page-break-inside: avoid;
+            }
+
+            .data-table thead {
+                display: table-header-group;
+            }
+
+            .footer {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <img src="<?= base_url('image/logo.png') ?>" alt="Logo Polri" class="logo">
+                <div class="header-text">
+                    <h1>Kepolisian Negara Republik Indonesia</h1>
+                    <h2>Polsek Lunang Silaut</h2>
+                    <p>Jl. Raya Lunang Silaut, Kab. Pesisir Selatan, Sumatera Barat</p>
+                    <p>Telp: (0756) 123456 | Email: polseklunangsilaut@polri.go.id</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Title -->
+        <div class="report-title">
+            <h3>Laporan Kasus Per Tahun</h3>
+        </div>
+
+        <!-- Report Information -->
+        <div class="report-info">
+            <table>
+                <tr>
+                    <td class="label">Tahun Laporan</td>
+                    <td>: <?= $tahun ?: 'Semua Tahun' ?></td>
+                </tr>
+                <tr>
+                    <td class="label">Total Kasus</td>
+                    <td>: <?= $totalKasus ?> kasus</td>
+                </tr>
+                <tr>
+                    <td class="label">Tanggal Cetak</td>
+                    <td>: <?= date('d F Y H:i:s') ?></td>
+                </tr>
+                <tr>
+                    <td class="label">Dicetak Oleh</td>
+                    <td>: <?= $user['nama'] ?? 'System' ?> (<?= strtoupper($role) ?>)</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Monthly Summary -->
+        <div class="section-title">Ringkasan Per Bulan</div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width: 20%;">Bulan</th>
+                    <th style="width: 15%;">Total Kasus</th>
+                    <th style="width: 15%;">Dilaporkan</th>
+                    <th style="width: 15%;">Dalam Proses</th>
+                    <th style="width: 15%;">Selesai</th>
+                    <th style="width: 15%;">Ditutup</th>
+                    <th style="width: 5%;">%</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $totalOverall = 0;
+                $totalDilaporkan = 0;
+                $totalDalamProses = 0;
+                $totalSelesai = 0;
+                $totalDitutup = 0;
+                ?>
+
+                <?php foreach ($monthlyStats as $stat): ?>
+                    <?php
+                    $totalOverall += $stat['total'];
+                    $totalDilaporkan += $stat['dilaporkan'];
+                    $totalDalamProses += $stat['dalam_proses'];
+                    $totalSelesai += $stat['selesai'];
+                    $totalDitutup += $stat['ditutup'];
+                    $percentage = $totalKasus > 0 ? round(($stat['total'] / $totalKasus) * 100, 1) : 0;
+                    ?>
+                    <tr>
+                        <td><?= $stat['bulan'] ?></td>
+                        <td style="text-align: center;"><?= $stat['total'] ?></td>
+                        <td style="text-align: center;"><?= $stat['dilaporkan'] ?></td>
+                        <td style="text-align: center;"><?= $stat['dalam_proses'] ?></td>
+                        <td style="text-align: center;"><?= $stat['selesai'] ?></td>
+                        <td style="text-align: center;"><?= $stat['ditutup'] ?></td>
+                        <td style="text-align: center;"><?= $percentage ?>%</td>
+                    </tr>
+                <?php endforeach; ?>
+
+                <tr class="total-row">
+                    <td>TOTAL</td>
+                    <td style="text-align: center;"><?= $totalOverall ?></td>
+                    <td style="text-align: center;"><?= $totalDilaporkan ?></td>
+                    <td style="text-align: center;"><?= $totalDalamProses ?></td>
+                    <td style="text-align: center;"><?= $totalSelesai ?></td>
+                    <td style="text-align: center;"><?= $totalDitutup ?></td>
+                    <td style="text-align: center;">100%</td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="signature">
+                <p>Mengetahui,</p>
+                <p><strong>KAPOLSEK LUNANG SILAUT</strong></p>
+                <div class="signature-line">
+                    <p><strong>KOMPOL AHMAD FAUZI, S.H.</strong></p>
+                    <p>NRP. 12345678</p>
+                </div>
+            </div>
+            <div class="signature">
+                <p>Dibuat Oleh,</p>
+                <p><strong><?= strtoupper($role) ?></strong></p>
+                <div class="signature-line">
+                    <p><strong><?= strtoupper($user['nama'] ?? 'SISTEM') ?></strong></p>
+                    <p>NRP. <?= $user['nrp'] ?? '-' ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto print when page loads
+        window.onload = function() {
+            window.print();
+        };
+    </script>
+</body>
+
+</html>

@@ -173,14 +173,14 @@
                     <div class="form-group">
                         <label for="foto">Foto Anggota</label>
                         <div class="text-center mb-3" style="position: relative;">
-                            <div id="fotoContainer" class="d-inline-block position-relative" style="width: 250px; height: 250px; margin: 0 auto;">
-                                <div id="fotoPreview" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; <?= $anggota['foto'] && file_exists(FCPATH . 'uploads/anggota/' . $anggota['foto']) ? '' : 'display: none;' ?> z-index: 2;">
+                            <div id="fotoContainer" class="d-inline-block position-relative">
+                                <div id="fotoPreview" style="<?= $anggota['foto'] && file_exists(FCPATH . 'uploads/anggota/' . $anggota['foto']) ? '' : 'display: none;' ?>">
                                     <img id="previewImg" src="<?= $anggota['foto'] && file_exists(FCPATH . 'uploads/anggota/' . $anggota['foto']) ? base_url('uploads/anggota/' . $anggota['foto']) : '' ?>"
                                         alt="Preview Foto" class="img-thumbnail rounded"
-                                        style="width: 100%; height: 100%; object-fit: cover; border: 3px solid #ffc107;">
+                                        style="width: 250px; height: 250px; object-fit: cover; border: 3px solid #ffc107;">
                                 </div>
                                 <div id="fotoPlaceholder" class="border rounded d-flex align-items-center justify-content-center"
-                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: 3px dashed #ffc107; cursor: pointer; transition: all 0.3s ease; <?= $anggota['foto'] && file_exists(FCPATH . 'uploads/anggota/' . $anggota['foto']) ? 'display: none;' : '' ?> z-index: 1;">
+                                    style="width: 250px; height: 250px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: 0 auto; border: 3px dashed #ffc107; cursor: pointer; transition: all 0.3s ease; <?= $anggota['foto'] && file_exists(FCPATH . 'uploads/anggota/' . $anggota['foto']) ? 'display: none;' : '' ?>">
                                     <div class="text-center">
                                         <i class="fas fa-camera fa-3x text-white mb-2"></i>
                                         <br>
@@ -240,96 +240,18 @@
         const originalSrc = '<?= $anggota['foto'] && file_exists(FCPATH . 'uploads/anggota/' . $anggota['foto']) ? base_url('uploads/anggota/' . $anggota['foto']) : '' ?>';
         const hasOriginalPhoto = <?= $anggota['foto'] && file_exists(FCPATH . 'uploads/anggota/' . $anggota['foto']) ? 'true' : 'false' ?>;
 
-        // Form validation and AJAX submission
-        $('#formAnggota').on('submit', function(e) {
-            e.preventDefault();
-
-            // Clear previous validation errors
-            $('.is-invalid').removeClass('is-invalid');
-            $('.invalid-feedback').hide();
-
-            // Show loading state
-            const submitBtn = $('button[type="submit"]');
-            const originalText = submitBtn.html();
-            submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> Mengupdate...');
-
-            // Prepare FormData for file upload
-            const formData = new FormData(this);
-
-            $.ajax({
-                url: $(this).attr('action'),
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil!',
-                            text: response.message,
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(() => {
-                            window.location.href = response.redirect;
-                        });
-                    } else {
-                        handleFormErrors(response);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX Error:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: 'Terjadi kesalahan saat mengupdate data. Silakan coba lagi.'
-                    });
-                },
-                complete: function() {
-                    // Reset button state
-                    submitBtn.prop('disabled', false).html(originalText);
-                }
-            });
-        });
-
-        // Function to handle form errors
-        function handleFormErrors(response) {
-            if (response.errors) {
-                // Show field-specific errors
-                $.each(response.errors, function(field, message) {
-                    const fieldElement = $(`[name="${field}"]`);
-                    fieldElement.addClass('is-invalid');
-
-                    let feedbackElement = fieldElement.siblings('.invalid-feedback');
-                    if (feedbackElement.length === 0) {
-                        feedbackElement = $(`<div class="invalid-feedback"></div>`);
-                        fieldElement.after(feedbackElement);
-                    }
-                    feedbackElement.text(message).show();
-                });
-            }
-
-            // Show general error message
-            Swal.fire({
-                icon: 'error',
-                title: 'Validasi Gagal!',
-                text: response.message || 'Silakan periksa form dan coba lagi.'
-            });
-        }
-
-        // Make foto container clickable with hover effects
-        $('#fotoContainer').click(function() {
+        // Make placeholder clickable with hover effects
+        $('#fotoPlaceholder').click(function() {
             $('#foto').click();
         }).hover(
             function() {
-                $('#fotoPlaceholder').css({
+                $(this).css({
                     'transform': 'scale(1.05)',
                     'box-shadow': '0 4px 15px rgba(255,193,7,0.4)'
                 });
             },
             function() {
-                $('#fotoPlaceholder').css({
+                $(this).css({
                     'transform': 'scale(1)',
                     'box-shadow': 'none'
                 });
@@ -369,8 +291,10 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     $('#previewImg').attr('src', e.target.result);
-                    $('#fotoPreview').fadeIn(300);
-                    $('#clearPhoto').show();
+                    $('#fotoPlaceholder').fadeOut(300, function() {
+                        $('#fotoPreview').fadeIn(300);
+                        $('#clearPhoto').show();
+                    });
                 };
                 reader.readAsDataURL(file);
             } else {
@@ -382,11 +306,15 @@
         function resetToOriginal() {
             if (hasOriginalPhoto) {
                 $('#previewImg').attr('src', originalSrc);
-                $('#fotoPreview').fadeIn(300);
-                $('#clearPhoto').show();
+                $('#fotoPlaceholder').fadeOut(300, function() {
+                    $('#fotoPreview').fadeIn(300);
+                    $('#clearPhoto').show();
+                });
             } else {
-                $('#fotoPreview').fadeOut(300);
-                $('#clearPhoto').hide();
+                $('#fotoPreview').fadeOut(300, function() {
+                    $('#fotoPlaceholder').fadeIn(300);
+                    $('#clearPhoto').hide();
+                });
                 $('#previewImg').attr('src', '');
             }
         }
@@ -394,8 +322,10 @@
         // Clear photo button
         $('#clearPhoto').click(function() {
             $('#foto').val('');
-            $('#fotoPreview').fadeOut(300);
-            $('#clearPhoto').hide();
+            $('#fotoPreview').fadeOut(300, function() {
+                $('#fotoPlaceholder').fadeIn(300);
+                $('#clearPhoto').hide();
+            });
             $('#previewImg').attr('src', '');
         });
 

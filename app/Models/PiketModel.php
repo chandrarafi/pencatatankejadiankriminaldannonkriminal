@@ -191,4 +191,143 @@ class PiketModel extends Model
             'piket_selesai' => $this->where('status', 'selesai')->countAllResults(),
         ];
     }
+
+    /**
+     * Get piket with pagination for DataTables with date filter
+     */
+    public function getPiketForDataTableWithDateFilter($search = '', $start = 0, $length = 10, $orderColumn = 0, $orderDir = 'asc', $startDate = null, $endDate = null)
+    {
+        $columns = ['tanggal_piket', 'anggota_list', 'shift', 'jam_mulai', 'lokasi_piket', 'status'];
+
+        $builder = $this->builder();
+
+        // Menggunakan subquery untuk menggabungkan nama anggota
+        $builder->select("piket.*, 
+            (SELECT GROUP_CONCAT(anggota.nama SEPARATOR ', ') 
+             FROM piket_detail 
+             JOIN anggota ON anggota.id = piket_detail.anggota_id 
+             WHERE piket_detail.piket_id = piket.id) as anggota_list,
+            (SELECT COUNT(*) 
+             FROM piket_detail 
+             WHERE piket_detail.piket_id = piket.id) as jumlah_anggota");
+
+        // Date filter
+        if ($startDate && $endDate) {
+            $builder->where('piket.tanggal_piket >=', $startDate)
+                ->where('piket.tanggal_piket <=', $endDate);
+        }
+
+        // Search functionality
+        if (!empty($search)) {
+            $builder->groupStart()
+                ->like('piket.shift', $search)
+                ->orLike('piket.lokasi_piket', $search)
+                ->orLike('piket.status', $search)
+                ->orLike('piket.tanggal_piket', $search)
+                ->orHavingLike('anggota_list', $search)
+                ->groupEnd();
+        }
+
+        // Order
+        if (isset($columns[$orderColumn])) {
+            $builder->orderBy($columns[$orderColumn], $orderDir);
+        } else {
+            $builder->orderBy('piket.tanggal_piket', 'desc');
+        }
+
+        // Get total records
+        $totalRecords = $builder->countAllResults(false);
+
+        // Pagination
+        $data = $builder->limit($length, $start)->get()->getResultArray();
+
+        return [
+            'data' => $data,
+            'recordsTotal' => $this->countAll(),
+            'recordsFiltered' => $totalRecords
+        ];
+    }
+
+    /**
+     * Get piket by date range
+     */
+    public function getPiketByDateRange($startDate, $endDate)
+    {
+        return $this->select("piket.*, 
+            (SELECT GROUP_CONCAT(anggota.nama SEPARATOR ', ') 
+             FROM piket_detail 
+             JOIN anggota ON anggota.id = piket_detail.anggota_id 
+             WHERE piket_detail.piket_id = piket.id) as anggota_list,
+            (SELECT COUNT(*) 
+             FROM piket_detail 
+             WHERE piket_detail.piket_id = piket.id) as jumlah_anggota")
+            ->where('tanggal_piket >=', $startDate)
+            ->where('tanggal_piket <=', $endDate)
+            ->orderBy('tanggal_piket', 'ASC')
+            ->orderBy('jam_mulai', 'ASC')
+            ->findAll();
+    }
+
+    /**
+     * Get monthly statistics
+     */
+    public function getMonthlyStatistics($year, $month)
+    {
+        // Gunakan raw SQL dengan JOIN untuk menghindari masalah GROUP BY
+        $sql = "SELECT 
+            DATE(p.tanggal_piket) as tanggal_piket,
+            COUNT(*) as total_piket,
+            SUM(CASE WHEN p.status = 'dijadwalkan' THEN 1 ELSE 0 END) as dijadwalkan,
+            SUM(CASE WHEN p.status = 'selesai' THEN 1 ELSE 0 END) as selesai,
+            SUM(CASE WHEN p.status = 'diganti' THEN 1 ELSE 0 END) as diganti,
+            SUM(CASE WHEN p.status = 'tidak_hadir' THEN 1 ELSE 0 END) as tidak_hadir,
+            COALESCE(SUM(pd_count.anggota_count), 0) as total_anggota
+        FROM piket p
+        LEFT JOIN (
+            SELECT 
+                piket_id,
+                COUNT(*) as anggota_count
+            FROM piket_detail
+            GROUP BY piket_id
+        ) pd_count ON p.id = pd_count.piket_id
+        WHERE YEAR(p.tanggal_piket) = ? AND MONTH(p.tanggal_piket) = ?
+        GROUP BY DATE(p.tanggal_piket)
+        ORDER BY tanggal_piket ASC";
+
+        return $this->db->query($sql, [$year, $month])->getResultArray();
+    }
+
+    /**
+     * Get monthly totals
+     */
+    public function getMonthlyTotals($year, $month)
+    {
+        // Gunakan raw SQL dengan JOIN untuk menghindari masalah GROUP BY
+        $sql = "SELECT 
+            COUNT(*) as total_piket,
+            SUM(CASE WHEN p.status = 'dijadwalkan' THEN 1 ELSE 0 END) as dijadwalkan,
+            SUM(CASE WHEN p.status = 'selesai' THEN 1 ELSE 0 END) as selesai,
+            SUM(CASE WHEN p.status = 'diganti' THEN 1 ELSE 0 END) as diganti,
+            SUM(CASE WHEN p.status = 'tidak_hadir' THEN 1 ELSE 0 END) as tidak_hadir,
+            COALESCE(SUM(pd_count.anggota_count), 0) as total_anggota
+        FROM piket p
+        LEFT JOIN (
+            SELECT 
+                piket_id,
+                COUNT(*) as anggota_count
+            FROM piket_detail
+            GROUP BY piket_id
+        ) pd_count ON p.id = pd_count.piket_id
+        WHERE YEAR(p.tanggal_piket) = ? AND MONTH(p.tanggal_piket) = ?";
+
+        $result = $this->db->query($sql, [$year, $month])->getRowArray();
+        return $result ?: [
+            'total_piket' => 0,
+            'dijadwalkan' => 0,
+            'selesai' => 0,
+            'diganti' => 0,
+            'tidak_hadir' => 0,
+            'total_anggota' => 0
+        ];
+    }
 }

@@ -191,7 +191,7 @@ class SaksiController extends BaseController
                 'hubungan_dengan_korban' => $this->request->getPost('hubungan_dengan_korban'),
                 'hubungan_dengan_tersangka' => $this->request->getPost('hubungan_dengan_tersangka'),
                 'keterangan_kesaksian' => $this->request->getPost('keterangan_kesaksian'),
-                'dapat_dihubungi' => $this->request->getPost('dapat_dihubungi') ? 1 : 0,
+                'dapat_dihubungi' => $this->request->getPost('dapat_dihubungi') ? 'ya' : 'tidak',
                 'keterangan' => $this->request->getPost('keterangan')
             ];
 
@@ -324,7 +324,7 @@ class SaksiController extends BaseController
                 'hubungan_dengan_korban' => $this->request->getPost('hubungan_dengan_korban'),
                 'hubungan_dengan_tersangka' => $this->request->getPost('hubungan_dengan_tersangka'),
                 'keterangan_kesaksian' => $this->request->getPost('keterangan_kesaksian'),
-                'dapat_dihubungi' => $this->request->getPost('dapat_dihubungi') ? 1 : 0,
+                'dapat_dihubungi' => $this->request->getPost('dapat_dihubungi') ? 'ya' : 'tidak',
                 'keterangan' => $this->request->getPost('keterangan')
             ];
 
@@ -408,6 +408,20 @@ class SaksiController extends BaseController
             return $this->response->setJSON(['success' => false, 'message' => 'Terjadi kesalahan saat mengambil data kasus']);
         }
     }
+
+    public function getByKasus($kasusId)
+    {
+        // Check role access
+        if ($this->session->get('role') !== 'reskrim') {
+            return $this->response->setJSON(['success' => false, 'message' => 'Akses ditolak']);
+        }
+
+        try {
+            $saksiData = $this->saksiModel->getByKasusId($kasusId);
+            return $this->response->setJSON(['success' => true, 'data' => $saksiData]);
+        } catch (\Exception $e) {
+            log_message('error', 'Error in SaksiController::getByKasus: ' . $e->getMessage());
+            return $this->response->setJSON(['success' => false, 'message' => 'Terjadi kesalahan']);
+        }
+    }
 }
-
-

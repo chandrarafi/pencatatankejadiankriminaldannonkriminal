@@ -251,19 +251,149 @@
                                     <p>Data Piket</p>
                                 </a>
                             </li>
+
+                            <!-- RESKRIM Management Reports -->
+                            <li class="nav-header">LAPORAN INVESTIGASI</li>
                             <li class="nav-item">
-                                <a href="<?= base_url('reskrim/laporan') ?>" class="nav-link">
-                                    <i class="nav-icon fas fa-file-alt"></i>
-                                    <p>Semua Laporan</p>
+                                <a href="<?= base_url('laporan-manajemen/dashboard-reskrim') ?>" class="nav-link">
+                                    <i class="nav-icon fas fa-search"></i>
+                                    <p>Dashboard Investigasi</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= base_url('laporan-manajemen/progress-investigasi') ?>" class="nav-link">
+                                    <i class="nav-icon fas fa-chart-line"></i>
+                                    <p>Progress Investigasi</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= base_url('laporan-manajemen/statistik-kriminalitas') ?>" class="nav-link">
+                                    <i class="nav-icon fas fa-chart-bar"></i>
+                                    <p>Statistik Kriminalitas</p>
                                 </a>
                             </li>
                         <?php elseif ($role === 'kapolsek'): ?>
                             <li class="nav-header">KAPOLSEK MENU</li>
                             <li class="nav-item">
+                                <a href="<?= base_url('laporan-manajemen/dashboard-kapolsek') ?>" class="nav-link">
+                                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                                    <p>Dashboard Eksekutif</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= base_url('laporan-manajemen/kinerja-unit') ?>" class="nav-link">
+                                    <i class="nav-icon fas fa-users"></i>
+                                    <p>Kinerja Unit</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= base_url('laporan-manajemen/statistik-kriminalitas') ?>" class="nav-link">
+                                    <i class="nav-icon fas fa-chart-bar"></i>
+                                    <p>Statistik Kriminalitas</p>
+                                </a>
+                            </li>
+                        <?php endif; ?>
+
+                        <!-- Laporan & Surat (accessible by all roles) -->
+                        <li class="nav-header">LAPORAN & SURAT</li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('laporan') ?>" class="nav-link">
+                                <i class="nav-icon fas fa-file-alt"></i>
+                                <p>Laporan Kasus</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('surat') ?>" class="nav-link">
+                                <i class="nav-icon fas fa-file-contract"></i>
+                                <p>Surat & Dokumen</p>
+                            </a>
+                        </li>
+
+                        <?php if (in_array($role, ['kapolsek', 'reskrim'])): ?>
+                            <li class="nav-header">LAPORAN DETAIL</li>
+                            <li class="nav-item">
+                                <a href="<?= base_url('laporan-pelapor') ?>" class="nav-link">
+                                    <i class="nav-icon fas fa-users"></i>
+                                    <p>Laporan Pelapor</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= base_url('laporan-korban') ?>" class="nav-link">
+                                    <i class="nav-icon fas fa-user-injured"></i>
+                                    <p>Laporan Korban</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= base_url('laporan-saksi') ?>" class="nav-link">
+                                    <i class="nav-icon fas fa-eye"></i>
+                                    <p>Laporan Saksi</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= base_url('laporan-tersangka') ?>" class="nav-link">
+                                    <i class="nav-icon fas fa-user-tie"></i>
+                                    <p>Laporan Tersangka</p>
+                                </a>
+                            </li>
+                            <?php if (in_array($role, ['reskrim', 'kapolsek'])): ?>
+                                <li class="nav-item">
+                                    <a href="<?= base_url('laporan-anggota') ?>" class="nav-link">
+                                        <i class="nav-icon fas fa-users"></i>
+                                        <p>Laporan Anggota</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item has-treeview">
+                                    <a href="#" class="nav-link">
+                                        <i class="nav-icon fas fa-shield-alt"></i>
+                                        <p>
+                                            Laporan Piket
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="<?= base_url('laporan-piket') ?>" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Laporan Per Tanggal</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?= base_url('laporan-piket/monthly') ?>" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Laporan Per Bulan</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            <?php endif; ?>
+                            <li class="nav-item has-treeview">
                                 <a href="#" class="nav-link">
                                     <i class="nav-icon fas fa-file-alt"></i>
-                                    <p>Semua Laporan</p>
+                                    <p>
+                                        Laporan Kasus
+                                        <i class="fas fa-angle-left right"></i>
+                                    </p>
                                 </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="<?= base_url('laporan-kasus') ?>" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Laporan Per Tanggal</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="<?= base_url('laporan-kasus/monthly') ?>" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Laporan Per Bulan</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="<?= base_url('laporan-kasus/yearly') ?>" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Laporan Per Tahun</p>
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
                         <?php endif; ?>
                     </ul>
@@ -323,6 +453,129 @@
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap4.min.js"></script>
 
     <?= $this->renderSection('scripts') ?>
+
+    <!-- Custom script for active menu -->
+    <script>
+        $(document).ready(function() {
+            // Set active menu based on current URL
+            const currentUrl = window.location.pathname;
+
+            // Check if we're on any laporan-kasus page
+            if (currentUrl.includes('laporan-kasus')) {
+                // Find the specific laporan-kasus dropdown menu
+                const laporanKasusDropdown = $('.nav-item.has-treeview').filter(function() {
+                    return $(this).find('p:contains("Laporan Kasus")').length > 0;
+                });
+
+                // Open the dropdown
+                laporanKasusDropdown.addClass('menu-open');
+                laporanKasusDropdown.find('> .nav-link').addClass('active');
+
+                // Mark specific submenu as active with exact match
+                laporanKasusDropdown.find('.nav-treeview .nav-link').each(function() {
+                    const linkHref = $(this).attr('href');
+                    if (linkHref) {
+                        // Get the relative path from href
+                        const url = new URL(linkHref);
+                        const relativePath = url.pathname;
+
+                        // Exact match for different pages
+                        let isActive = false;
+
+                        if (relativePath.endsWith('/laporan-kasus') && (currentUrl.endsWith('/laporan-kasus') || currentUrl === '/laporan-kasus/')) {
+                            isActive = true;
+                        } else if (relativePath.includes('/laporan-kasus/monthly') && currentUrl.includes('/laporan-kasus/monthly')) {
+                            isActive = true;
+                        } else if (relativePath.includes('/laporan-kasus/yearly') && currentUrl.includes('/laporan-kasus/yearly')) {
+                            isActive = true;
+                        }
+
+                        if (isActive) {
+                            $(this).addClass('active');
+                        }
+                    }
+                });
+            }
+
+            // Check if we're on laporan-pelapor page
+            if (currentUrl.includes('laporan-pelapor')) {
+                $('.nav-link').each(function() {
+                    const linkHref = $(this).attr('href');
+                    if (linkHref && linkHref.includes('laporan-pelapor')) {
+                        $(this).addClass('active');
+                    }
+                });
+            }
+
+            // Check if we're on laporan-korban page
+            if (currentUrl.includes('laporan-korban')) {
+                $('.nav-link').each(function() {
+                    const linkHref = $(this).attr('href');
+                    if (linkHref && linkHref.includes('laporan-korban')) {
+                        $(this).addClass('active');
+                    }
+                });
+            }
+
+            // Check if we're on laporan-saksi page
+            if (currentUrl.includes('laporan-saksi')) {
+                $('.nav-link').each(function() {
+                    const linkHref = $(this).attr('href');
+                    if (linkHref && linkHref.includes('laporan-saksi')) {
+                        $(this).addClass('active');
+                    }
+                });
+            }
+
+            // Check if we're on laporan-tersangka page
+            if (currentUrl.includes('laporan-tersangka')) {
+                $('.nav-link').each(function() {
+                    const linkHref = $(this).attr('href');
+                    if (linkHref && linkHref.includes('laporan-tersangka')) {
+                        $(this).addClass('active');
+                    }
+                });
+            }
+
+            // Check if we're on laporan-anggota page
+            if (currentUrl.includes('laporan-anggota')) {
+                $('.nav-link').each(function() {
+                    const linkHref = $(this).attr('href');
+                    if (linkHref && linkHref.includes('laporan-anggota')) {
+                        $(this).addClass('active');
+                    }
+                });
+            }
+
+            // Check if we're on laporan-piket page
+            if (currentUrl.includes('laporan-piket')) {
+                const laporanPiketDropdown = $('.nav-item.has-treeview').filter(function() {
+                    return $(this).find('p:contains("Laporan Piket")').length > 0;
+                });
+                laporanPiketDropdown.addClass('menu-open');
+                laporanPiketDropdown.find('> .nav-link').addClass('active');
+
+                laporanPiketDropdown.find('.nav-treeview .nav-link').each(function() {
+                    const linkHref = $(this).attr('href');
+                    if (linkHref) {
+                        const url = new URL(linkHref);
+                        const relativePath = url.pathname;
+                        let isActive = false;
+
+                        if (relativePath.endsWith('/laporan-piket') && (currentUrl.endsWith('/laporan-piket') || currentUrl === '/laporan-piket/')) {
+                            isActive = true;
+                        } else if (relativePath.includes('/laporan-piket/monthly') && currentUrl.includes('/laporan-piket/monthly')) {
+                            isActive = true;
+                        }
+
+                        if (isActive) {
+                            $(this).addClass('active');
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

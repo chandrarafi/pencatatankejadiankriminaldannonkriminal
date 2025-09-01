@@ -362,4 +362,20 @@ class KorbanController extends BaseController
             ]);
         }
     }
+
+    public function getByKasus($kasusId)
+    {
+        // Check role access
+        if ($this->session->get('role') !== 'reskrim') {
+            return $this->response->setJSON(['success' => false, 'message' => 'Akses ditolak']);
+        }
+
+        try {
+            $korbanData = $this->korbanModel->getByKasusId($kasusId);
+            return $this->response->setJSON(['success' => true, 'data' => $korbanData]);
+        } catch (\Exception $e) {
+            log_message('error', 'Error in KorbanController::getByKasus: ' . $e->getMessage());
+            return $this->response->setJSON(['success' => false, 'message' => 'Terjadi kesalahan']);
+        }
+    }
 }

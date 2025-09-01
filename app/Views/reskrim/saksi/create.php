@@ -180,7 +180,7 @@
                     <div class="form-group">
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input" id="dapat_dihubungi" name="dapat_dihubungi"
-                                value="1" <?= old('dapat_dihubungi') ? 'checked' : '' ?>>
+                                value="ya" <?= old('dapat_dihubungi') ? 'checked' : '' ?>>
                             <label class="form-check-label" for="dapat_dihubungi">
                                 Dapat dihubungi untuk keperluan penyelidikan lebih lanjut
                             </label>
@@ -466,4 +466,3 @@
     });
 </script>
 <?= $this->endSection() ?>
-
