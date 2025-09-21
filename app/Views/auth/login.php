@@ -152,7 +152,7 @@
                     </div>
                 </form>
 
-                <div class="mt-4">
+                <!-- <div class="mt-4">
                     <div class="alert alert-info">
                         <h6><i class="fas fa-info-circle mr-2"></i>Akun Default:</h6>
                         <small>
@@ -162,7 +162,7 @@
                             <strong>Kapolsek:</strong> kapolsek_admin / password123
                         </small>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
