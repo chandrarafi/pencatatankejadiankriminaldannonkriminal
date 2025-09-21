@@ -24,15 +24,11 @@ class JenisKasusModel extends Model
 
     protected array $casts = [];
     protected array $castHandlers = [];
-
-    // Dates
     protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
-
-    // Validation
     protected $validationRules = [
         'kode_jenis' => 'required|max_length[20]|is_unique[jenis_kasus.kode_jenis,id,{id}]',
         'nama_jenis' => 'required|max_length[255]',
@@ -54,8 +50,6 @@ class JenisKasusModel extends Model
 
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
-
-    // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
     protected $afterInsert    = [];
@@ -66,9 +60,6 @@ class JenisKasusModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    /**
-     * Get active jenis kasus for dropdown
-     */
     public function getActiveJenisKasus()
     {
         return $this->where('is_active', true)
@@ -76,16 +67,11 @@ class JenisKasusModel extends Model
             ->findAll();
     }
 
-    /**
-     * Get jenis kasus with pagination for DataTables
-     */
     public function getJenisKasusForDataTable($search = '', $start = 0, $length = 10, $orderColumn = 0, $orderDir = 'asc')
     {
         $columns = ['kode_jenis', 'nama_jenis', 'deskripsi', 'is_active', 'created_at'];
 
         $builder = $this->builder();
-
-        // Search functionality
         if (!empty($search)) {
             $builder->groupStart()
                 ->like('kode_jenis', $search)
@@ -93,18 +79,12 @@ class JenisKasusModel extends Model
                 ->orLike('deskripsi', $search)
                 ->groupEnd();
         }
-
-        // Order
         if (isset($columns[$orderColumn])) {
             $builder->orderBy($columns[$orderColumn], $orderDir);
         } else {
             $builder->orderBy('created_at', 'desc');
         }
-
-        // Get total records
         $totalRecords = $builder->countAllResults(false);
-
-        // Pagination
         $data = $builder->limit($length, $start)->get()->getResultArray();
 
         return [
@@ -114,9 +94,6 @@ class JenisKasusModel extends Model
         ];
     }
 
-    /**
-     * Get statistics for dashboard
-     */
     public function getStatistics()
     {
         return [

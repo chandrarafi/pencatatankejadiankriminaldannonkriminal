@@ -37,14 +37,14 @@ class PelaporModel extends Model
     protected array $casts = [];
     protected array $castHandlers = [];
 
-    // Dates
+
     protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
 
-    // Validation
+
     protected $validationRules = [
         'nama'            => 'required|max_length[255]',
         'nik'             => 'permit_empty|max_length[20]',
@@ -95,7 +95,7 @@ class PelaporModel extends Model
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 
-    // Callbacks
+
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
     protected $afterInsert    = [];
@@ -127,7 +127,7 @@ class PelaporModel extends Model
         $builder->select('pelapor.*, users.fullname as created_by_name')
             ->join('users', 'users.id = pelapor.created_by', 'left');
 
-        // Search functionality
+
         if (!empty($search)) {
             $builder->groupStart()
                 ->like('pelapor.nama', $search)
@@ -140,7 +140,7 @@ class PelaporModel extends Model
                 ->groupEnd();
         }
 
-        // Order
+
         if (isset($columns[$orderColumn])) {
             if ($orderColumn == 0) { // nama
                 $builder->orderBy('pelapor.nama', $orderDir);
@@ -151,10 +151,10 @@ class PelaporModel extends Model
             $builder->orderBy('pelapor.created_at', 'desc');
         }
 
-        // Get total records
+
         $totalRecords = $builder->countAllResults(false);
 
-        // Pagination
+
         $data = $builder->limit($length, $start)->get()->getResultArray();
 
         return [
@@ -247,7 +247,7 @@ class PelaporModel extends Model
      */
     public function getDataTableData($search = '', $start = 0, $length = 10, $orderColumn = 'created_at', $orderDir = 'desc')
     {
-        // Ensure parameters are of correct type
+
         $start = (int) $start;
         $length = (int) $length;
         $search = (string) $search;

@@ -16,7 +16,7 @@ class AnggotaController extends BaseController
         $this->anggotaModel = new AnggotaModel();
         $this->session = \Config\Services::session();
 
-        // Cek apakah user adalah kasium
+
         if ($this->session->get('role') !== 'kasium') {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Access denied');
         }
@@ -95,7 +95,7 @@ class AnggotaController extends BaseController
             $orderDir
         );
 
-        // Format data untuk DataTables
+
         $formattedData = [];
         foreach ($result['data'] as $row) {
             $statusBadge = $this->getStatusBadge($row['status']);
@@ -137,12 +137,12 @@ class AnggotaController extends BaseController
      */
     public function store()
     {
-        // Jika AJAX request
+
         if ($this->request->isAJAX()) {
             return $this->storeAjax();
         }
 
-        // Default non-AJAX (fallback)
+
         $data = [
             'nrp' => $this->request->getPost('nrp'),
             'nama' => $this->request->getPost('nama'),
@@ -157,7 +157,7 @@ class AnggotaController extends BaseController
             'keterangan' => $this->request->getPost('keterangan'),
         ];
 
-        // Handle foto upload
+
         $foto = $this->request->getFile('foto');
         if ($foto && $foto->isValid() && !$foto->hasMoved()) {
             $fotoName = $this->uploadFoto($foto);
@@ -199,7 +199,7 @@ class AnggotaController extends BaseController
                 'keterangan' => $this->request->getPost('keterangan'),
             ];
 
-            // Handle foto upload
+
             $foto = $this->request->getFile('foto');
             if ($foto && $foto->isValid() && !$foto->hasMoved()) {
                 $fotoName = $this->uploadFoto($foto);
@@ -264,12 +264,12 @@ class AnggotaController extends BaseController
      */
     public function update($id)
     {
-        // Jika AJAX request
+
         if ($this->request->isAJAX()) {
             return $this->updateAjax($id);
         }
 
-        // Default non-AJAX (fallback)
+
         $existingAnggota = $this->anggotaModel->find($id);
 
         if (!$existingAnggota) {
@@ -291,14 +291,14 @@ class AnggotaController extends BaseController
             'keterangan' => $this->request->getPost('keterangan'),
         ];
 
-        // Handle foto upload
+
         $foto = $this->request->getFile('foto');
         if ($foto && $foto->isValid() && !$foto->hasMoved()) {
             $fotoName = $this->uploadFoto($foto);
             if ($fotoName) {
                 $data['foto'] = $fotoName;
 
-                // Delete old photo if exists
+
                 if ($existingAnggota['foto']) {
                     $this->deleteFoto($existingAnggota['foto']);
                 }
@@ -348,14 +348,14 @@ class AnggotaController extends BaseController
                 'keterangan' => $this->request->getPost('keterangan'),
             ];
 
-            // Handle foto upload
+
             $foto = $this->request->getFile('foto');
             if ($foto && $foto->isValid() && !$foto->hasMoved()) {
                 $fotoName = $this->uploadFoto($foto);
                 if ($fotoName) {
                     $data['foto'] = $fotoName;
 
-                    // Delete old photo if exists
+
                     if ($existingAnggota['foto']) {
                         $this->deleteFoto($existingAnggota['foto']);
                     }
@@ -396,7 +396,7 @@ class AnggotaController extends BaseController
      */
     public function delete($id)
     {
-        // Get anggota data to delete photo
+
         $anggota = $this->anggotaModel->find($id);
 
         if (!$anggota) {
@@ -405,7 +405,7 @@ class AnggotaController extends BaseController
         }
 
         if ($this->anggotaModel->delete($id)) {
-            // Delete photo if exists
+
             if ($anggota['foto']) {
                 $this->deleteFoto($anggota['foto']);
             }
@@ -427,11 +427,11 @@ class AnggotaController extends BaseController
             return $this->response->setJSON(['success' => false, 'message' => 'Invalid request']);
         }
 
-        // Get anggota data to delete photo
+
         $anggota = $this->anggotaModel->find($id);
 
         if ($this->anggotaModel->delete($id)) {
-            // Delete photo if exists
+
             if ($anggota && $anggota['foto']) {
                 $this->deleteFoto($anggota['foto']);
             }
@@ -485,29 +485,29 @@ class AnggotaController extends BaseController
      */
     private function uploadFoto($file)
     {
-        // Validasi file
+
         if (!$file->isValid()) {
             return false;
         }
 
-        // Validasi tipe file
+
         $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
         if (!in_array($file->getMimeType(), $allowedTypes)) {
             return false;
         }
 
-        // Validasi ukuran file (max 2MB)
+
         if ($file->getSize() > 2 * 1024 * 1024) {
             return false;
         }
 
-        // Generate nama file unik
+
         $fileName = uniqid() . '_' . time() . '.' . $file->getExtension();
 
-        // Upload ke direktori public/uploads/anggota
+
         $uploadPath = FCPATH . 'uploads/anggota/';
 
-        // Buat direktori jika belum ada
+
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0755, true);
         }

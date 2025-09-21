@@ -29,14 +29,14 @@ class PiketModel extends Model
     protected array $casts = [];
     protected array $castHandlers = [];
 
-    // Dates
+
     protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
 
-    // Validation
+
     protected $validationRules = [
         'tanggal_piket'  => 'required|valid_date[Y-m-d]',
         'shift'          => 'required|in_list[pagi,siang,malam]',
@@ -75,7 +75,7 @@ class PiketModel extends Model
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 
-    // Callbacks
+
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
     protected $afterInsert    = [];
@@ -85,6 +85,16 @@ class PiketModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    /**
+     * Temukan piket berdasarkan tanggal dan shift
+     */
+    public function findByTanggalAndShift(string $tanggalPiket, string $shift)
+    {
+        return $this->where('tanggal_piket', $tanggalPiket)
+            ->where('shift', $shift)
+            ->first();
+    }
 
     /**
      * Get single piket with anggota data
@@ -103,7 +113,7 @@ class PiketModel extends Model
 
         $builder = $this->builder();
 
-        // Menggunakan subquery untuk menggabungkan nama anggota
+
         $builder->select("piket.*, 
             (SELECT GROUP_CONCAT(anggota.nama SEPARATOR ', ') 
              FROM piket_detail 
@@ -111,9 +121,9 @@ class PiketModel extends Model
              WHERE piket_detail.piket_id = piket.id) as anggota_list,
             (SELECT COUNT(*) 
              FROM piket_detail 
-             WHERE piket_detail.piket_id = piket.id) as jumlah_anggota");
+             WHERE piket_detail.piket_id = piket.id) as jumlah_anggota ");
 
-        // Search functionality
+
         if (!empty($search)) {
             $builder->groupStart()
                 ->like('piket.shift', $search)
@@ -124,17 +134,17 @@ class PiketModel extends Model
                 ->groupEnd();
         }
 
-        // Order
+
         if (isset($columns[$orderColumn])) {
             $builder->orderBy($columns[$orderColumn], $orderDir);
         } else {
             $builder->orderBy('piket.tanggal_piket', 'desc');
         }
 
-        // Get total records
+
         $totalRecords = $builder->countAllResults(false);
 
-        // Pagination
+
         $data = $builder->limit($length, $start)->get()->getResultArray();
 
         return [
@@ -170,8 +180,8 @@ class PiketModel extends Model
      */
     public function checkConflict($anggotaId, $tanggalPiket, $shift, $excludeId = null)
     {
-        // This method is deprecated since we moved to multi-anggota system
-        // Conflict checking should be done in PiketDetailModel or Controller
+
+
         return false;
     }
 
@@ -201,7 +211,7 @@ class PiketModel extends Model
 
         $builder = $this->builder();
 
-        // Menggunakan subquery untuk menggabungkan nama anggota
+
         $builder->select("piket.*, 
             (SELECT GROUP_CONCAT(anggota.nama SEPARATOR ', ') 
              FROM piket_detail 
@@ -211,13 +221,13 @@ class PiketModel extends Model
              FROM piket_detail 
              WHERE piket_detail.piket_id = piket.id) as jumlah_anggota");
 
-        // Date filter
+
         if ($startDate && $endDate) {
             $builder->where('piket.tanggal_piket >=', $startDate)
                 ->where('piket.tanggal_piket <=', $endDate);
         }
 
-        // Search functionality
+
         if (!empty($search)) {
             $builder->groupStart()
                 ->like('piket.shift', $search)
@@ -228,17 +238,17 @@ class PiketModel extends Model
                 ->groupEnd();
         }
 
-        // Order
+
         if (isset($columns[$orderColumn])) {
             $builder->orderBy($columns[$orderColumn], $orderDir);
         } else {
             $builder->orderBy('piket.tanggal_piket', 'desc');
         }
 
-        // Get total records
+
         $totalRecords = $builder->countAllResults(false);
 
-        // Pagination
+
         $data = $builder->limit($length, $start)->get()->getResultArray();
 
         return [
@@ -273,7 +283,7 @@ class PiketModel extends Model
      */
     public function getMonthlyStatistics($year, $month)
     {
-        // Gunakan raw SQL dengan JOIN untuk menghindari masalah GROUP BY
+
         $sql = "SELECT 
             DATE(p.tanggal_piket) as tanggal_piket,
             COUNT(*) as total_piket,
@@ -302,7 +312,7 @@ class PiketModel extends Model
      */
     public function getMonthlyTotals($year, $month)
     {
-        // Gunakan raw SQL dengan JOIN untuk menghindari masalah GROUP BY
+
         $sql = "SELECT 
             COUNT(*) as total_piket,
             SUM(CASE WHEN p.status = 'dijadwalkan' THEN 1 ELSE 0 END) as dijadwalkan,

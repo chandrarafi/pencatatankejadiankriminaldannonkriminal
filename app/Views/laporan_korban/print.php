@@ -229,13 +229,16 @@
                 <thead>
                     <tr>
                         <th style="width: 4%;">No.</th>
-                        <th style="width: 18%;">Nama</th>
-                        <th style="width: 15%;">NIK</th>
-                        <th style="width: 8%;">JK</th>
-                        <th style="width: 6%;">Umur</th>
-                        <th style="width: 20%;">Alamat</th>
-                        <th style="width: 12%;">Status Korban</th>
-                        <th style="width: 17%;">No. Kasus</th>
+                        <th style="width: 12%;">Nama</th>
+                        <th style="width: 12%;">NIK</th>
+                        <th style="width: 5%;">JK</th>
+                        <th style="width: 5%;">Umur</th>
+                        <th style="width: 15%;">Alamat</th>
+                        <th style="width: 10%;">Status Korban</th>
+                        <th style="width: 8%;">Kode Jenis</th>
+                        <th style="width: 12%;">Judul Kasus</th>
+                        <th style="width: 17%;">Deskripsi</th>
+                        <th style="width: 10%;">No. Kasus</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -248,6 +251,9 @@
                             <td style="text-align: center;"><?= $korban['umur'] ?></td>
                             <td><?= $korban['alamat'] ?: '-' ?></td>
                             <td style="text-align: center;"><?= ucfirst(str_replace('_', ' ', $korban['status_korban'])) ?></td>
+                            <td style="text-align: center;"><?= $korban['kode_jenis'] ?? '-' ?></td>
+                            <td><?= $korban['judul_kasus'] ?? '-' ?></td>
+                            <td><?= isset($korban['deskripsi_kasus']) && $korban['deskripsi_kasus'] ? (mb_strimwidth($korban['deskripsi_kasus'], 0, 80, '...')) : '-' ?></td>
                             <td><?= $korban['nomor_kasus'] ?: '-' ?></td>
                         </tr>
                     <?php endforeach; ?>

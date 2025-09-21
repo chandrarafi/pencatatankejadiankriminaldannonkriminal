@@ -106,6 +106,9 @@
                                 <th>Umur</th>
                                 <th>Alamat</th>
                                 <th>Status Korban</th>
+                                <th>Kode Jenis</th>
+                                <th>Judul Kasus</th>
+                                <th>Deskripsi</th>
                                 <th>No. Kasus</th>
                                 <th>Terdaftar</th>
                                 <th>Aksi</th>
@@ -191,6 +194,19 @@
                     {
                         data: 'status_korban',
                         name: 'status_korban'
+                    },
+                    {
+                        data: 'kode_jenis',
+                        name: 'kode_jenis'
+                    },
+                    {
+                        data: 'judul_kasus',
+                        name: 'judul_kasus'
+                    },
+                    {
+                        data: 'deskripsi',
+                        name: 'deskripsi',
+                        orderable: false
                     },
                     {
                         data: 'nomor_kasus',

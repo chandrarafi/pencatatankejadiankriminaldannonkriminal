@@ -229,13 +229,16 @@
                 <thead>
                     <tr>
                         <th style="width: 4%;">No.</th>
-                        <th style="width: 18%;">Nama</th>
-                        <th style="width: 15%;">NIK</th>
-                        <th style="width: 8%;">JK</th>
-                        <th style="width: 6%;">Umur</th>
-                        <th style="width: 20%;">Alamat</th>
-                        <th style="width: 12%;">Status</th>
-                        <th style="width: 17%;">No. Kasus</th>
+                        <th style="width: 12%;">Nama</th>
+                        <th style="width: 12%;">NIK</th>
+                        <th style="width: 5%;">JK</th>
+                        <th style="width: 5%;">Umur</th>
+                        <th style="width: 15%;">Alamat</th>
+                        <th style="width: 10%;">Status</th>
+                        <th style="width: 8%;">Kode Jenis</th>
+                        <th style="width: 12%;">Judul Kasus</th>
+                        <th style="width: 17%;">Deskripsi</th>
+                        <th style="width: 10%;">No. Kasus</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -259,6 +262,9 @@
                                 echo $statusLabel;
                                 ?>
                             </td>
+                            <td style="text-align: center;"><?= $tersangka['kode_jenis'] ?? '-' ?></td>
+                            <td><?= $tersangka['judul_kasus'] ?? '-' ?></td>
+                            <td><?= isset($tersangka['deskripsi_kasus']) && $tersangka['deskripsi_kasus'] ? (mb_strimwidth($tersangka['deskripsi_kasus'], 0, 80, '...')) : '-' ?></td>
                             <td><?= $tersangka['nomor_kasus'] ?: '-' ?></td>
                         </tr>
                     <?php endforeach; ?>

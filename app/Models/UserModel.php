@@ -30,14 +30,14 @@ class UserModel extends Model
     ];
     protected array $castHandlers = [];
 
-    // Dates
+
     protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
 
-    // Validation
+
     protected $validationRules = [
         'username' => 'required|min_length[3]|max_length[100]|is_unique[users.username,id,{id}]',
         'email'    => 'required|valid_email|is_unique[users.email,id,{id}]',
@@ -76,7 +76,7 @@ class UserModel extends Model
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 
-    // Callbacks
+
     protected $allowCallbacks = true;
     protected $beforeInsert   = ['hashPassword'];
     protected $afterInsert    = [];
@@ -109,7 +109,7 @@ class UserModel extends Model
             ->first();
 
         if ($user && password_verify($password, $user['password'])) {
-            // Hapus password dari return data untuk keamanan
+
             unset($user['password']);
             return $user;
         }

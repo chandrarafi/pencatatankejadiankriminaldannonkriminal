@@ -32,15 +32,13 @@ class AnggotaModel extends Model
 
     protected array $casts = [];
     protected array $castHandlers = [];
-
-    // Dates
     protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
 
-    // Validation
+
     protected $validationRules = [
         'nrp'     => 'required|min_length[3]|max_length[50]|is_unique[anggota.nrp,id,{id}]',
         'nama'    => 'required|min_length[3]|max_length[255]',
@@ -87,7 +85,7 @@ class AnggotaModel extends Model
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 
-    // Callbacks
+
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
     protected $afterInsert    = [];
@@ -98,32 +96,23 @@ class AnggotaModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    /**
-     * Get anggota yang aktif
-     */
     public function getActiveAnggota()
     {
         return $this->where('status', 'aktif')->findAll();
     }
 
-    /**
-     * Get anggota by NRP
-     */
     public function getByNrp($nrp)
     {
         return $this->where('nrp', $nrp)->first();
     }
 
-    /**
-     * Get anggota with pagination for DataTables
-     */
     public function getAnggotaForDataTable($search = '', $start = 0, $length = 10, $orderColumn = 0, $orderDir = 'asc')
     {
         $columns = ['nrp', 'nama', 'pangkat', 'jabatan', 'status'];
 
         $builder = $this->builder();
 
-        // Search functionality
+
         if (!empty($search)) {
             $builder->groupStart()
                 ->like('nrp', $search)
@@ -133,15 +122,15 @@ class AnggotaModel extends Model
                 ->groupEnd();
         }
 
-        // Order
+
         if (isset($columns[$orderColumn])) {
             $builder->orderBy($columns[$orderColumn], $orderDir);
         }
 
-        // Get total records
+
         $totalRecords = $this->countAllResults(false);
 
-        // Pagination
+
         $data = $builder->limit($length, $start)->get()->getResultArray();
 
         return [
@@ -151,9 +140,6 @@ class AnggotaModel extends Model
         ];
     }
 
-    /**
-     * Get statistics
-     */
     public function getStatistics()
     {
         return [

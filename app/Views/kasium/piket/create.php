@@ -168,7 +168,7 @@
 
 <!-- Modal Pilih Anggota -->
 <div class="modal fade" id="modalPilihAnggota" tabindex="-1" role="dialog" aria-labelledby="modalPilihAnggotaLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalPilihAnggotaLabel">
@@ -209,7 +209,7 @@
                     <table id="tableAnggotaModal" class="table table-bordered table-striped table-hover">
                         <thead class="thead-dark">
                             <tr>
-                                <th width="5%" class="text-center">
+                                <th width="5%" class="text-center" style="padding-left: 60px;">
                                     <div class="icheck-primary">
                                         <input type="checkbox" id="selectAll">
                                         <label for="selectAll"></label>
@@ -225,7 +225,7 @@
                             <?php foreach ($anggotaList as $anggota): ?>
                                 <tr>
                                     <td class="text-center">
-                                        <div class="icheck-primary">
+                                        <div class="icheck-primary" style="padding-left: 60px;">
                                             <input type="checkbox" class="anggota-checkbox"
                                                 id="anggota_<?= $anggota['id'] ?>"
                                                 value="<?= $anggota['id'] ?>"

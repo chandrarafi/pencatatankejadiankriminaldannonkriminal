@@ -56,8 +56,26 @@ class LaporanPelaporController extends BaseController
         $orderColumn = $columns[$orderColumnIndex] ?? 'created_at';
 
         try {
-            // Build query
-            $builder = $this->pelaporModel->select('*');
+            // Build query + subquery kasus terbaru milik pelapor
+            $builder = $this->pelaporModel->select(
+                "pelapor.*, 
+                (SELECT jk.kode_jenis 
+                   FROM kasus k 
+                   LEFT JOIN jenis_kasus jk ON jk.id = k.jenis_kasus_id 
+                  WHERE k.pelapor_id = pelapor.id 
+               ORDER BY k.created_at DESC 
+                  LIMIT 1) AS kode_jenis,
+                (SELECT k.judul_kasus 
+                   FROM kasus k 
+                  WHERE k.pelapor_id = pelapor.id 
+               ORDER BY k.created_at DESC 
+                  LIMIT 1) AS judul_kasus,
+                (SELECT k.deskripsi 
+                   FROM kasus k 
+                  WHERE k.pelapor_id = pelapor.id 
+               ORDER BY k.created_at DESC 
+                  LIMIT 1) AS deskripsi_kasus"
+            );
 
             // Apply search
             if ($searchValue) {
@@ -89,6 +107,9 @@ class LaporanPelaporController extends BaseController
                     'jenis_kelamin' => ucfirst($record['jenis_kelamin']),
                     'alamat' => $record['alamat'] ?: '-',
                     'telepon' => $record['telepon'] ?: '-',
+                    'kode_jenis' => $record['kode_jenis'] ?: '-',
+                    'judul_kasus' => $record['judul_kasus'] ?: '-',
+                    'deskripsi' => !empty($record['deskripsi_kasus']) ? mb_strimwidth($record['deskripsi_kasus'], 0, 80, '...') : '-',
                     'created_at' => date('d/m/Y H:i', strtotime($record['created_at'])),
                     'actions' => '<button type="button" class="btn btn-sm btn-info" onclick="showDetail(' . $record['id'] . ')">
                                     <i class="fas fa-eye"></i> Detail
@@ -153,7 +174,30 @@ class LaporanPelaporController extends BaseController
         $role = session()->get('role');
 
         // Get all pelapor data
-        $pelaporData = $this->pelaporModel->orderBy('nama', 'ASC')->findAll();
+        $pelaporData = $this->pelaporModel->select(
+            "pelapor.*, 
+            (SELECT jk.kode_jenis 
+               FROM kasus k 
+               LEFT JOIN jenis_kasus jk ON jk.id = k.jenis_kasus_id 
+              WHERE k.pelapor_id = pelapor.id 
+           ORDER BY k.created_at DESC 
+              LIMIT 1) AS kode_jenis,
+            (SELECT k.judul_kasus 
+               FROM kasus k 
+              WHERE k.pelapor_id = pelapor.id 
+           ORDER BY k.created_at DESC 
+              LIMIT 1) AS judul_kasus,
+            (SELECT k.deskripsi 
+               FROM kasus k 
+              WHERE k.pelapor_id = pelapor.id 
+           ORDER BY k.created_at DESC 
+              LIMIT 1) AS deskripsi_kasus,
+            (SELECT k.nomor_kasus 
+               FROM kasus k 
+              WHERE k.pelapor_id = pelapor.id 
+           ORDER BY k.created_at DESC 
+              LIMIT 1) AS nomor_kasus"
+        )->orderBy('nama', 'ASC')->findAll();
 
         // Get statistics
         $totalPelapor = count($pelaporData);
@@ -229,4 +273,3 @@ class LaporanPelaporController extends BaseController
         }
     }
 }
-

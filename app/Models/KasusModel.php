@@ -36,14 +36,14 @@ class KasusModel extends Model
     protected array $casts = [];
     protected array $castHandlers = [];
 
-    // Dates
+
     protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
 
-    // Validation
+
     protected $validationRules = [
         'nomor_kasus'     => 'permit_empty|max_length[50]|is_unique[kasus.nomor_kasus,id,{id}]',
         'jenis_kasus_id'  => 'required|integer|is_not_unique[jenis_kasus.id]',
@@ -101,7 +101,7 @@ class KasusModel extends Model
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 
-    // Callbacks
+
     protected $allowCallbacks = true;
     protected $beforeInsert   = ['generateNomorKasus'];
     protected $afterInsert    = [];
@@ -121,7 +121,7 @@ class KasusModel extends Model
             $year = date('Y');
             $month = date('m');
 
-            // Get last number for this month
+
             $lastKasus = $this->where('nomor_kasus LIKE', "K-$year$month-%")
                 ->orderBy('nomor_kasus', 'DESC')
                 ->first();
@@ -163,7 +163,7 @@ class KasusModel extends Model
         $builder->select('kasus.*, jenis_kasus.nama_jenis')
             ->join('jenis_kasus', 'jenis_kasus.id = kasus.jenis_kasus_id', 'left');
 
-        // Search functionality
+
         if (!empty($search)) {
             $builder->groupStart()
                 ->like('kasus.nomor_kasus', $search)
@@ -175,7 +175,7 @@ class KasusModel extends Model
                 ->groupEnd();
         }
 
-        // Order
+
         if (isset($columns[$orderColumn])) {
             if ($orderColumn == 2) { // nama_jenis
                 $builder->orderBy('jenis_kasus.nama_jenis', $orderDir);
@@ -186,10 +186,10 @@ class KasusModel extends Model
             $builder->orderBy('kasus.created_at', 'desc');
         }
 
-        // Get total records
+
         $totalRecords = $builder->countAllResults(false);
 
-        // Pagination
+
         $data = $builder->limit($length, $start)->get()->getResultArray();
 
         return [
@@ -267,7 +267,7 @@ class KasusModel extends Model
      */
     public function getDataTableData($search = '', $start = 0, $length = 10, $orderColumn = 'created_at', $orderDir = 'desc')
     {
-        // Ensure parameters are of correct type
+
         $start = (int) $start;
         $length = (int) $length;
         $search = (string) $search;

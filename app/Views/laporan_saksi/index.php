@@ -107,6 +107,9 @@
                                 <th>Alamat</th>
                                 <th>Jenis Saksi</th>
                                 <th>Dapat Dihubungi</th>
+                                <th>Kode Jenis</th>
+                                <th>Judul Kasus</th>
+                                <th>Deskripsi</th>
                                 <th>No. Kasus</th>
                                 <th>Terdaftar</th>
                                 <th>Aksi</th>
@@ -196,6 +199,19 @@
                     {
                         data: 'dapat_dihubungi',
                         name: 'dapat_dihubungi',
+                        orderable: false
+                    },
+                    {
+                        data: 'kode_jenis',
+                        name: 'kode_jenis'
+                    },
+                    {
+                        data: 'judul_kasus',
+                        name: 'judul_kasus'
+                    },
+                    {
+                        data: 'deskripsi',
+                        name: 'deskripsi',
                         orderable: false
                     },
                     {

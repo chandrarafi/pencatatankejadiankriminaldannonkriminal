@@ -228,12 +228,16 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th style="width: 5%;">No.</th>
-                        <th style="width: 25%;">Nama</th>
-                        <th style="width: 20%;">NIK</th>
-                        <th style="width: 12%;">Jenis Kelamin</th>
-                        <th style="width: 25%;">Alamat</th>
-                        <th style="width: 13%;">Telepon</th>
+                        <th style="width: 4%;">No.</th>
+                        <th style="width: 12%;">Nama</th>
+                        <th style="width: 12%;">NIK</th>
+                        <th style="width: 8%;">JK</th>
+                        <th style="width: 15%;">Alamat</th>
+                        <th style="width: 10%;">Telepon</th>
+                        <th style="width: 8%;">Kode Jenis</th>
+                        <th style="width: 12%;">Judul Kasus</th>
+                        <th style="width: 19%;">Deskripsi</th>
+                        <th style="width: 10%;">Nomor Kasus</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -242,9 +246,13 @@
                             <td style="text-align: center;"><?= $index + 1 ?></td>
                             <td><?= $pelapor['nama'] ?></td>
                             <td><?= $pelapor['nik'] ?: '-' ?></td>
-                            <td style="text-align: center;"><?= ucfirst($pelapor['jenis_kelamin']) ?></td>
+                            <td style="text-align: center;"><?= substr(ucfirst($pelapor['jenis_kelamin']), 0, 1) ?></td>
                             <td><?= $pelapor['alamat'] ?: '-' ?></td>
                             <td><?= $pelapor['telepon'] ?: '-' ?></td>
+                            <td style="text-align: center;"><?= $pelapor['kode_jenis'] ?: '-' ?></td>
+                            <td><?= $pelapor['judul_kasus'] ?: '-' ?></td>
+                            <td><?= $pelapor['deskripsi_kasus'] ?: '-' ?></td>
+                            <td><?= $pelapor['nomor_kasus'] ?: '-' ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

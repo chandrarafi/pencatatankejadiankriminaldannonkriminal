@@ -139,15 +139,7 @@
                         </button>
                     </div>
 
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="mb-1">Laporan Harian</h6>
-                            <small class="text-muted">Laporan kegiatan harian</small>
-                        </div>
-                        <a href="<?= base_url('surat/laporan-harian') ?>" class="btn btn-secondary btn-sm" <?= $role !== 'kasium' ? 'style="display:none;"' : '' ?>>
-                            <i class="fas fa-calendar-day mr-1"></i> Buat Laporan
-                        </a>
-                    </div>
+
                 </div>
             </div>
         </div>

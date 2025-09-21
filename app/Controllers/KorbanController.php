@@ -22,7 +22,7 @@ class KorbanController extends BaseController
 
     public function index()
     {
-        // Check role access
+
         $role = $this->session->get('role');
         if ($role !== 'reskrim') {
             return redirect()->to('/auth')->with('error', 'Akses ditolak');
@@ -44,7 +44,7 @@ class KorbanController extends BaseController
     public function getData()
     {
         try {
-            // Check role access
+
             if ($this->session->get('role') !== 'reskrim') {
                 return $this->response->setJSON(['error' => 'Akses ditolak']);
             }
@@ -55,7 +55,7 @@ class KorbanController extends BaseController
             $length = (int)($request['length'] ?? 10);
             $searchValue = $request['search']['value'] ?? '';
 
-            // Get column for ordering
+
             $orderColumnIndex = (int)($request['order'][0]['column'] ?? 0);
             $orderDir = $request['order'][0]['dir'] ?? 'desc';
 
@@ -128,7 +128,7 @@ class KorbanController extends BaseController
 
     public function create()
     {
-        // Check role access
+
         $role = $this->session->get('role');
         if ($role !== 'reskrim') {
             return redirect()->to('/auth')->with('error', 'Akses ditolak');
@@ -150,7 +150,7 @@ class KorbanController extends BaseController
 
     public function storeAjax()
     {
-        // Check role access
+
         if ($this->session->get('role') !== 'reskrim') {
             return $this->response->setJSON(['success' => false, 'message' => 'Akses ditolak']);
         }
@@ -180,7 +180,7 @@ class KorbanController extends BaseController
 
     public function show($id)
     {
-        // Check role access
+
         $role = $this->session->get('role');
         if ($role !== 'reskrim') {
             return redirect()->to('/auth')->with('error', 'Akses ditolak');
@@ -209,7 +209,7 @@ class KorbanController extends BaseController
 
     public function edit($id)
     {
-        // Check role access
+
         $role = $this->session->get('role');
         if ($role !== 'reskrim') {
             return redirect()->to('/auth')->with('error', 'Akses ditolak');
@@ -238,7 +238,7 @@ class KorbanController extends BaseController
 
     public function updateAjax($id)
     {
-        // Check role access
+
         if ($this->session->get('role') !== 'reskrim') {
             return $this->response->setJSON(['success' => false, 'message' => 'Akses ditolak']);
         }
@@ -268,7 +268,7 @@ class KorbanController extends BaseController
 
     public function deleteAjax($id)
     {
-        // Check role access
+
         if ($this->session->get('role') !== 'reskrim') {
             return $this->response->setJSON(['success' => false, 'message' => 'Akses ditolak']);
         }
@@ -295,7 +295,7 @@ class KorbanController extends BaseController
 
     public function getById($id)
     {
-        // Check role access
+
         if ($this->session->get('role') !== 'reskrim') {
             return $this->response->setJSON(['error' => 'Akses ditolak']);
         }
@@ -311,7 +311,7 @@ class KorbanController extends BaseController
 
     public function search()
     {
-        // Check role access
+
         if ($this->session->get('role') !== 'reskrim') {
             return $this->response->setJSON(['error' => 'Akses ditolak']);
         }
@@ -336,13 +336,13 @@ class KorbanController extends BaseController
 
     public function getKasusData()
     {
-        // Check role access
+
         if ($this->session->get('role') !== 'reskrim') {
             return $this->response->setJSON(['success' => false, 'message' => 'Akses ditolak']);
         }
 
         try {
-            // Get kasus data with pelapor information
+
             $kasusData = $this->kasusModel
                 ->select('kasus.*, pelapor.nama as pelapor_nama')
                 ->join('pelapor', 'pelapor.id = kasus.pelapor_id', 'left')
@@ -365,7 +365,7 @@ class KorbanController extends BaseController
 
     public function getByKasus($kasusId)
     {
-        // Check role access
+
         if ($this->session->get('role') !== 'reskrim') {
             return $this->response->setJSON(['success' => false, 'message' => 'Akses ditolak']);
         }

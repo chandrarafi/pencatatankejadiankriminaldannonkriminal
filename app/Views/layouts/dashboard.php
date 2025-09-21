@@ -253,7 +253,7 @@
                             </li>
 
                             <!-- RESKRIM Management Reports -->
-                            <li class="nav-header">LAPORAN INVESTIGASI</li>
+                            <!-- <li class="nav-header">LAPORAN INVESTIGASI</li>
                             <li class="nav-item">
                                 <a href="<?= base_url('laporan-manajemen/dashboard-reskrim') ?>" class="nav-link">
                                     <i class="nav-icon fas fa-search"></i>
@@ -271,7 +271,7 @@
                                     <i class="nav-icon fas fa-chart-bar"></i>
                                     <p>Statistik Kriminalitas</p>
                                 </a>
-                            </li>
+                            </li> -->
                         <?php elseif ($role === 'kapolsek'): ?>
                             <li class="nav-header">KAPOLSEK MENU</li>
                             <li class="nav-item">
@@ -295,19 +295,21 @@
                         <?php endif; ?>
 
                         <!-- Laporan & Surat (accessible by all roles) -->
-                        <li class="nav-header">LAPORAN & SURAT</li>
-                        <li class="nav-item">
-                            <a href="<?= base_url('laporan') ?>" class="nav-link">
-                                <i class="nav-icon fas fa-file-alt"></i>
-                                <p>Laporan Kasus</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url('surat') ?>" class="nav-link">
-                                <i class="nav-icon fas fa-file-contract"></i>
-                                <p>Surat & Dokumen</p>
-                            </a>
-                        </li>
+                        <?php if (in_array($role, ['reskrim', 'kapolsek'])): ?>
+                            <li class="nav-header">SURAT</li>
+                            <!-- <li class="nav-item">
+                                <a href="<?= base_url('laporan') ?>" class="nav-link">
+                                    <i class="nav-icon fas fa-file-alt"></i>
+                                    <p>Laporan Kasus</p>
+                                </a>
+                            </li> -->
+                            <li class="nav-item">
+                                <a href="<?= base_url('surat') ?>" class="nav-link">
+                                    <i class="nav-icon fas fa-file-contract"></i>
+                                    <p>Surat & Dokumen</p>
+                                </a>
+                            </li>
+                        <?php endif; ?>
 
                         <?php if (in_array($role, ['kapolsek', 'reskrim'])): ?>
                             <li class="nav-header">LAPORAN DETAIL</li>

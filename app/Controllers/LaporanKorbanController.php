@@ -57,7 +57,7 @@ class LaporanKorbanController extends BaseController
 
         try {
             // Build query with kasus join
-            $builder = $this->korbanModel->select('korban.*, kasus.nomor_kasus, kasus.judul_kasus, jenis_kasus.nama_jenis')
+            $builder = $this->korbanModel->select('korban.*, kasus.nomor_kasus, kasus.judul_kasus, kasus.deskripsi as deskripsi_kasus, jenis_kasus.nama_jenis, jenis_kasus.kode_jenis')
                 ->join('kasus', 'kasus.id = korban.kasus_id', 'left')
                 ->join('jenis_kasus', 'jenis_kasus.id = kasus.jenis_kasus_id', 'left');
 
@@ -95,6 +95,9 @@ class LaporanKorbanController extends BaseController
                     'alamat' => $record['alamat'] ?: '-',
                     'status_korban' => ucfirst(str_replace('_', ' ', $record['status_korban'])),
                     'nomor_kasus' => $record['nomor_kasus'] ?: '-',
+                    'kode_jenis' => $record['kode_jenis'] ?? '-',
+                    'judul_kasus' => $record['judul_kasus'] ?? '-',
+                    'deskripsi' => $record['deskripsi_kasus'] ? mb_strimwidth($record['deskripsi_kasus'], 0, 80, '...') : '-',
                     'created_at' => date('d/m/Y H:i', strtotime($record['created_at'])),
                     'actions' => '<button type="button" class="btn btn-sm btn-info" onclick="showDetail(' . $record['id'] . ')">
                                     <i class="fas fa-eye"></i> Detail
@@ -123,7 +126,7 @@ class LaporanKorbanController extends BaseController
     public function getDetail($id)
     {
         try {
-            $korban = $this->korbanModel->select('korban.*, kasus.nomor_kasus, kasus.judul_kasus, kasus.tanggal_kejadian, kasus.status as status_kasus, jenis_kasus.nama_jenis')
+            $korban = $this->korbanModel->select('korban.*, kasus.nomor_kasus, kasus.judul_kasus, kasus.deskripsi as deskripsi_kasus, kasus.tanggal_kejadian, kasus.status as status_kasus, jenis_kasus.nama_jenis, jenis_kasus.kode_jenis')
                 ->join('kasus', 'kasus.id = korban.kasus_id', 'left')
                 ->join('jenis_kasus', 'jenis_kasus.id = kasus.jenis_kasus_id', 'left')
                 ->find($id);
@@ -153,8 +156,8 @@ class LaporanKorbanController extends BaseController
         $user = session()->get('user_data');
         $role = session()->get('role');
 
-        // Get all korban data with kasus info
-        $korbanData = $this->korbanModel->select('korban.*, kasus.nomor_kasus, kasus.judul_kasus, kasus.tanggal_kejadian, jenis_kasus.nama_jenis')
+        // Get all korban data dengan info kasus lengkap
+        $korbanData = $this->korbanModel->select('korban.*, kasus.nomor_kasus, kasus.judul_kasus, kasus.deskripsi as deskripsi_kasus, kasus.tanggal_kejadian, jenis_kasus.nama_jenis, jenis_kasus.kode_jenis')
             ->join('kasus', 'kasus.id = korban.kasus_id', 'left')
             ->join('jenis_kasus', 'jenis_kasus.id = kasus.jenis_kasus_id', 'left')
             ->orderBy('korban.nama', 'ASC')
@@ -238,4 +241,3 @@ class LaporanKorbanController extends BaseController
         }
     }
 }
-

@@ -165,26 +165,65 @@ class PiketController extends BaseController
         }
 
         // Default non-AJAX (fallback)
+        $tanggal = $this->request->getPost('tanggal_piket');
+        $shift = $this->request->getPost('shift');
+        $jamMulai = $this->request->getPost('jam_mulai');
+        $jamSelesai = $this->request->getPost('jam_selesai');
+        $lokasi = $this->request->getPost('lokasi_piket') ?: 'Polsek Lunang Silaut';
+        $keterangan = $this->request->getPost('keterangan');
+
+        // Anggap input anggota_ids (comma separated) tersedia pada form non-AJAX juga
+        $anggotaIdsString = $this->request->getPost('anggota_ids');
+        $anggotaIds = $anggotaIdsString ? array_map('trim', array_filter(explode(',', $anggotaIdsString))) : [];
+
+        // Cek apakah sudah ada piket dengan tanggal+shift sama
+        $existing = $this->piketModel->findByTanggalAndShift($tanggal, $shift);
+
+        if ($existing) {
+            // Update data jadwal (jam/lokasi/keterangan tetap diupdate bila ada perubahan)
+            $updateData = [
+                'jam_mulai' => $jamMulai,
+                'jam_selesai' => $jamSelesai,
+                'lokasi_piket' => $lokasi,
+                'keterangan' => $keterangan,
+                'status' => 'dijadwalkan',
+            ];
+
+            $this->piketModel->update($existing['id'], $updateData);
+
+            // Gabungkan anggota baru tanpa duplikasi
+            if (!empty($anggotaIds)) {
+                $this->piketDetailModel->addUniqueAnggotaToPiket((int) $existing['id'], $anggotaIds);
+            }
+
+            session()->setFlashdata('success', 'Data piket sudah ada, anggota baru digabungkan');
+            return redirect()->to('kasium/piket');
+        }
+
+        // Jika belum ada, buat baru
         $data = [
-            'anggota_id' => $this->request->getPost('anggota_id'),
-            'tanggal_piket' => $this->request->getPost('tanggal_piket'),
-            'shift' => $this->request->getPost('shift'),
-            'jam_mulai' => $this->request->getPost('jam_mulai'),
-            'jam_selesai' => $this->request->getPost('jam_selesai'),
-            'lokasi_piket' => $this->request->getPost('lokasi_piket') ?: 'Polsek Lunang Silaut',
-            'keterangan' => $this->request->getPost('keterangan'),
+            'tanggal_piket' => $tanggal,
+            'shift' => $shift,
+            'jam_mulai' => $jamMulai,
+            'jam_selesai' => $jamSelesai,
+            'lokasi_piket' => $lokasi,
+            'keterangan' => $keterangan,
             'status' => 'dijadwalkan',
             'created_by' => $this->session->get('user_id')
         ];
 
-        if ($this->piketModel->insert($data)) {
+        $piketId = $this->piketModel->insert($data);
+        if ($piketId) {
+            if (!empty($anggotaIds)) {
+                $this->piketDetailModel->insertAnggotaToPiket($piketId, $anggotaIds);
+            }
             session()->setFlashdata('success', 'Data piket berhasil ditambahkan');
             return redirect()->to('kasium/piket');
-        } else {
-            session()->setFlashdata('error', 'Gagal menambahkan data piket');
-            session()->setFlashdata('errors', $this->piketModel->errors());
-            return redirect()->back()->withInput();
         }
+
+        session()->setFlashdata('error', 'Gagal menambahkan data piket');
+        session()->setFlashdata('errors', $this->piketModel->errors());
+        return redirect()->back()->withInput();
     }
 
     /**
@@ -193,16 +232,12 @@ class PiketController extends BaseController
     private function storeAjax()
     {
         try {
-            $data = [
-                'tanggal_piket' => $this->request->getPost('tanggal_piket'),
-                'shift' => $this->request->getPost('shift'),
-                'jam_mulai' => $this->request->getPost('jam_mulai'),
-                'jam_selesai' => $this->request->getPost('jam_selesai'),
-                'lokasi_piket' => $this->request->getPost('lokasi_piket') ?: 'Polsek Lunang Silaut',
-                'keterangan' => $this->request->getPost('keterangan'),
-                'status' => 'dijadwalkan',
-                'created_by' => $this->session->get('user_id')
-            ];
+            $tanggal = $this->request->getPost('tanggal_piket');
+            $shift = $this->request->getPost('shift');
+            $jamMulai = $this->request->getPost('jam_mulai');
+            $jamSelesai = $this->request->getPost('jam_selesai');
+            $lokasi = $this->request->getPost('lokasi_piket') ?: 'Polsek Lunang Silaut';
+            $keterangan = $this->request->getPost('keterangan');
 
             // Get anggota yang dipilih
             $anggotaIdsString = $this->request->getPost('anggota_ids');
@@ -231,35 +266,64 @@ class PiketController extends BaseController
                 ]);
             }
 
-            // Insert piket utama
-            $piketId = $this->piketModel->insert($data);
+            // Cek apakah sudah ada piket dengan tanggal+shift sama
+            $existing = $this->piketModel->findByTanggalAndShift($tanggal, $shift);
+
+            if ($existing) {
+                // Update jadwal jika ada perubahan dan gabungkan anggota baru
+                $updateData = [
+                    'jam_mulai' => $jamMulai,
+                    'jam_selesai' => $jamSelesai,
+                    'lokasi_piket' => $lokasi,
+                    'keterangan' => $keterangan,
+                    'status' => 'dijadwalkan',
+                ];
+
+                $this->piketModel->update($existing['id'], $updateData);
+                $added = $this->piketDetailModel->addUniqueAnggotaToPiket((int) $existing['id'], $anggotaIds);
+
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => 'Data piket sudah ada, ' . ($added ?: 0) . ' anggota baru digabungkan',
+                    'redirect' => base_url('kasium/piket')
+                ]);
+            }
+
+            // Insert piket utama jika belum ada
+            $piketId = $this->piketModel->insert([
+                'tanggal_piket' => $tanggal,
+                'shift' => $shift,
+                'jam_mulai' => $jamMulai,
+                'jam_selesai' => $jamSelesai,
+                'lokasi_piket' => $lokasi,
+                'keterangan' => $keterangan,
+                'status' => 'dijadwalkan',
+                'created_by' => $this->session->get('user_id')
+            ]);
 
             if ($piketId) {
-                // Insert detail anggota
                 $success = $this->piketDetailModel->insertAnggotaToPiket($piketId, $anggotaIds);
-
                 if ($success) {
                     return $this->response->setJSON([
                         'success' => true,
                         'message' => 'Data piket berhasil ditambahkan dengan ' . count($anggotaIds) . ' anggota',
                         'redirect' => base_url('kasium/piket')
                     ]);
-                } else {
-                    // Rollback piket jika gagal insert detail
-                    $this->piketModel->delete($piketId);
-                    return $this->response->setJSON([
-                        'success' => false,
-                        'message' => 'Gagal menambahkan detail anggota',
-                        'errors' => []
-                    ]);
                 }
-            } else {
+                // Rollback jika gagal detail
+                $this->piketModel->delete($piketId);
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Gagal menambahkan data piket',
-                    'errors' => $this->piketModel->errors()
+                    'message' => 'Gagal menambahkan detail anggota',
+                    'errors' => []
                 ]);
             }
+
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Gagal menambahkan data piket',
+                'errors' => $this->piketModel->errors()
+            ]);
         } catch (\Exception $e) {
             log_message('error', 'Error in storeAjax: ' . $e->getMessage());
             return $this->response->setJSON([

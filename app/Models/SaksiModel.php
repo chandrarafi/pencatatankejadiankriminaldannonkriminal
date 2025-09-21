@@ -36,14 +36,14 @@ class SaksiModel extends Model
     protected array $casts = [];
     protected array $castHandlers = [];
 
-    // Dates
+
     protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
 
-    // Validation
+
     protected $validationRules      = [
         'kasus_id' => 'required|integer',
         'nama' => 'required|max_length[255]',
@@ -86,7 +86,7 @@ class SaksiModel extends Model
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 
-    // Callbacks
+
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
     protected $afterInsert    = [];

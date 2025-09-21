@@ -105,6 +105,9 @@
                                 <th>Jenis Kelamin</th>
                                 <th>Alamat</th>
                                 <th>Telepon</th>
+                                <th>Kode Jenis</th>
+                                <th>Judul Kasus</th>
+                                <th>Deskripsi</th>
                                 <th>Terdaftar</th>
                                 <th>Aksi</th>
                             </tr>
@@ -185,6 +188,19 @@
                     {
                         data: 'telepon',
                         name: 'telepon'
+                    },
+                    {
+                        data: 'kode_jenis',
+                        name: 'kode_jenis'
+                    },
+                    {
+                        data: 'judul_kasus',
+                        name: 'judul_kasus'
+                    },
+                    {
+                        data: 'deskripsi',
+                        name: 'deskripsi',
+                        orderable: false
                     },
                     {
                         data: 'created_at',

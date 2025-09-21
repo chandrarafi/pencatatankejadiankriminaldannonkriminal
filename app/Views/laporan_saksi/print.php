@@ -229,13 +229,16 @@
                 <thead>
                     <tr>
                         <th style="width: 4%;">No.</th>
-                        <th style="width: 18%;">Nama</th>
-                        <th style="width: 15%;">NIK</th>
-                        <th style="width: 8%;">JK</th>
-                        <th style="width: 6%;">Umur</th>
-                        <th style="width: 20%;">Alamat</th>
-                        <th style="width: 12%;">Jenis Saksi</th>
-                        <th style="width: 17%;">No. Kasus</th>
+                        <th style="width: 12%;">Nama</th>
+                        <th style="width: 12%;">NIK</th>
+                        <th style="width: 5%;">JK</th>
+                        <th style="width: 5%;">Umur</th>
+                        <th style="width: 15%;">Alamat</th>
+                        <th style="width: 10%;">Jenis Saksi</th>
+                        <th style="width: 8%;">Kode Jenis</th>
+                        <th style="width: 12%;">Judul Kasus</th>
+                        <th style="width: 17%;">Deskripsi</th>
+                        <th style="width: 10%;">No. Kasus</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -259,6 +262,9 @@
                                 echo $jenisSaksiLabel;
                                 ?>
                             </td>
+                            <td style="text-align: center;"><?= $saksi['kode_jenis'] ?? '-' ?></td>
+                            <td><?= $saksi['judul_kasus'] ?? '-' ?></td>
+                            <td><?= isset($saksi['deskripsi_kasus']) && $saksi['deskripsi_kasus'] ? (mb_strimwidth($saksi['deskripsi_kasus'], 0, 80, '...')) : '-' ?></td>
                             <td><?= $saksi['nomor_kasus'] ?: '-' ?></td>
                         </tr>
                     <?php endforeach; ?>

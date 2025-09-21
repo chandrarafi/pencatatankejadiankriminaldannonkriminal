@@ -24,14 +24,14 @@ class PiketDetailModel extends Model
     protected array $casts = [];
     protected array $castHandlers = [];
 
-    // Dates
+
     protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
 
-    // Validation
+
     protected $validationRules = [
         'piket_id'   => 'required|integer|is_not_unique[piket.id]',
         'anggota_id' => 'required|integer|is_not_unique[anggota.id]'
@@ -53,7 +53,7 @@ class PiketDetailModel extends Model
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 
-    // Callbacks
+
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
     protected $afterInsert    = [];
@@ -63,6 +63,48 @@ class PiketDetailModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    /**
+     * Tambahkan anggota ke piket tanpa duplikasi
+     * Mengembalikan jumlah baris yang ditambahkan
+     */
+    public function addUniqueAnggotaToPiket(int $piketId, array $anggotaIds, ?string $keterangan = null)
+    {
+        if (empty($anggotaIds)) {
+            return 0;
+        }
+
+
+        $existing = $this->select('anggota_id')
+            ->where('piket_id', $piketId)
+            ->findColumn('anggota_id') ?? [];
+
+
+        $existingMap = array_flip($existing);
+        $toInsert = [];
+        $now = date('Y-m-d H:i:s');
+        foreach ($anggotaIds as $anggotaId) {
+            $anggotaId = (int) $anggotaId;
+            if ($anggotaId <= 0) {
+                continue;
+            }
+            if (!isset($existingMap[$anggotaId])) {
+                $toInsert[] = [
+                    'piket_id' => $piketId,
+                    'anggota_id' => $anggotaId,
+                    'keterangan' => $keterangan,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
+        }
+
+        if (empty($toInsert)) {
+            return 0;
+        }
+
+        return (int) $this->insertBatch($toInsert);
+    }
 
     /**
      * Get detail piket dengan data anggota
